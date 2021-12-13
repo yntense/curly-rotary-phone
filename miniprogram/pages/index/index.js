@@ -5,6 +5,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    items: ['BLE', 'WIFI', 'NFC']
 
   },
 
@@ -12,7 +13,17 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    /** 打开以下注释可以测试 scrollView */
+    // for (let index = 0; index < 100; index++) {
+    //   this.data.items.push(index);
+    // }
+    //补齐项目
+    if (this.data.items.length % 3 == 2) {
+      this.data.items.push('');
+    }
+    this.setData({
+      items: this.data.items
+    })
   },
 
   /**

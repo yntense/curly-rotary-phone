@@ -1,2 +1,12 @@
 <!--miniprogram/pages/index.wxml-->
-<text>miniprogram/pages/index.wxml</text>
+<!-- 页面根 -->
+<view class="pageRoot">
+<!-- 页面内容超出屏幕时可滑动 -->
+<scroll-view  scroll-y="true">
+<view class="scrollView">
+<view class="content" wx:for="{{items}}" wx:key="index" >
+  <text>{{items[index]}}</text>
+</view>
+</view>
+</scroll-view>
+</view>

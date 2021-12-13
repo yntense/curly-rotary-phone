@@ -1,1 +1,27 @@
 /* miniprogram/pages/index.wxss */
+.pageRoot {
+  /* 充满页面宽度 */
+  width: 100vw;
+  height: auto;
+}
+
+.scrollView {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between; 
+}
+
+.content {
+  width: 33vw;
+  height: 33vw;
+  box-sizing: border-box;
+  background-color: lightblue;
+  color: whitesmoke;
+  display: flex;
+  flex-direction: row;
+  align-items: center;     /* 子 view 垂直居中 */
+  justify-content: center; 
+  margin-top: 1px;
+  
+}
