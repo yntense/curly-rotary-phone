@@ -1,12 +1,15 @@
 // miniprogram/pages/index.js
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    items: ['BLE', 'WIFI', 'NFC']
-
+    items: ['BLE', 'WIFI', 'NFC',
+      'BLE', 'WIFI', 'NFC',
+      'BLE', 'WIFI', 'NFC'
+    ]
   },
 
   /**
@@ -14,9 +17,9 @@ Page({
    */
   onLoad: function (options) {
     /** 打开以下注释可以测试 scrollView */
-    // for (let index = 0; index < 100; index++) {
-    //   this.data.items.push(index);
-    // }
+    for (let index = 0; index < 100; index++) {
+      this.data.items.push(index);
+    }
     //补齐项目
     if (this.data.items.length % 3 == 2) {
       this.data.items.push('');
@@ -73,5 +76,25 @@ Page({
    */
   onShareAppMessage: function () {
 
-  }
+  },
+  /**
+   * 监听页面点击
+   * @param {} params 
+   */
+  onListenSelectView: function (params) {
+    /**此处可以查看，点击页面传自定义的参数 */
+    //console.log(params)
+    let viewId = params.currentTarget.dataset.viewId
+    switch (viewId) {
+      case 'BLE':
+        // 根据 viewId 页面切换
+        wx.navigateTo({
+          url: '../BLE/BLEDeviceShow/BLEDeviceShow'
+        })
+        break;
+
+      default:
+        break;
+    }
+  },
 })

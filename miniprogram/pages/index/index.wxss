@@ -23,5 +23,4 @@
   align-items: center;     /* 子 view 垂直居中 */
   justify-content: center; 
   margin-top: 1px;
-  
 }

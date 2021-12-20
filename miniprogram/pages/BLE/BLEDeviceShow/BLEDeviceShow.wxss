@@ -1,0 +1,6 @@
+/* miniprogram/pages/BLE/BLEDeviceShow/BLEDeviceShow.wxss */
+
+.BLEDeviceItem {
+  width: fill;
+  height: auto;
+}

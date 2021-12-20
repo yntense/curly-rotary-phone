@@ -1,0 +1,14 @@
+<!--miniprogram/pages/BLE/BLEDeviceShow/BLEDeviceShow.wxml-->
+<!-- 页面根 -->
+<view class="pageRoot">
+  <!-- 页面内容超出屏幕时可滑动 -->
+  <scroll-view scroll-y="true">
+    <view class="scrollView">
+      <view class="BLEDeviceItem" wx:for="{{BLEDeviceList}}" wx:key="index"  bindtap="onListenDeviceKicked" data-device-id='{{BLEDeviceList[index].deviceId}}'>
+        <view>{{BLEDeviceList[index].deviceName}}</view>
+        <view>{{BLEDeviceList[index].deviceId}}</view>
+        <view>{{BLEDeviceList[index].rssi}}</view>
+      </view>
+    </view>
+  </scroll-view>
+</view>
