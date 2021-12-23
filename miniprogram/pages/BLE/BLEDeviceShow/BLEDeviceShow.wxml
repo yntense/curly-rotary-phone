@@ -4,10 +4,16 @@
   <!-- 页面内容超出屏幕时可滑动 -->
   <scroll-view scroll-y="true">
     <view class="scrollView">
-      <view class="BLEDeviceItem" wx:for="{{BLEDeviceList}}" wx:key="index"  bindtap="onListenDeviceKicked" data-device-id='{{BLEDeviceList[index].deviceId}}'>
-        <view>{{BLEDeviceList[index].deviceName}}</view>
-        <view>{{BLEDeviceList[index].deviceId}}</view>
-        <view>{{BLEDeviceList[index].rssi}}</view>
+      <view class="BLEDeviceItem " wx:for="{{BLEDeviceList}}" wx:key="index" bindtap="onListenDeviceKicked"
+        data-device-id='{{BLEDeviceList[index].deviceId}}'>
+        <view class="signal">
+          <view>{{BLEDeviceList[index].rssi}}</view>
+        </view>
+        <view class="device">
+          <view>{{BLEDeviceList[index].deviceName}}</view>
+          <view>{{BLEDeviceList[index].deviceId}}</view>
+        </view>
+        <view class="inditor"></view>
       </view>
     </view>
   </scroll-view>

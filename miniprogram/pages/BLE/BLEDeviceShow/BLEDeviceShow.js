@@ -8,6 +8,7 @@ import {
   uuid
 } from "../../../module/BLE/BLEUart"
 
+var bleUtils = require('../../../module/BLE/BLEUtils')
 Page({
 
   /**
@@ -15,8 +16,14 @@ Page({
    */
   data: {
     BLEDeviceList: [{
-      deviceName: '测试',
-      deviceId: 2,
+      deviceName: 'hello  6',
+      deviceId: "067BB2A6-5D97-0656-0606-848BF2D1B5E7",
+      rssi: -51
+    },
+    {
+      deviceName: 'hello  6',
+      deviceId: "067BB2A6-5D97-0656-0606-848BF2D1B5E7",
+      rssi: -51
     }],
   },
   bleUart: null,
@@ -124,7 +131,12 @@ Page({
     console.log(params)
     let deviceId = params.currentTarget.dataset.deviceId
     if (deviceId == 2) {
-      this.bleUart.sendMessage('嗨，你好！')
+      let array = bleUtils.encodeUtf8('嗨，你好！')
+      array.forEach(element => {
+        console.log(element.toString(16))
+      });
+      
+      this.bleUart.sendMessage(array)
       return
     }
     this.ble.connect(deviceId)

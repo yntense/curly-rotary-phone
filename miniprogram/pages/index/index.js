@@ -87,6 +87,22 @@ Page({
     let viewId = params.currentTarget.dataset.viewId
     switch (viewId) {
       case 'BLE':
+        let items = []
+
+
+        for (let i = 0; i < 10000000; i++) {
+          items.push(i)
+        }
+        console.log(items.length)
+        // Using Date objects
+        let start = Date.now()
+
+        // The event to time goes here:
+        console.log(items.shift(), items.length)
+        let end = Date.now()
+        let elapsed = end - start // elapsed time in milliseconds
+
+        console.log(elapsed)
         // 根据 viewId 页面切换
         wx.navigateTo({
           url: '../BLE/BLEDeviceShow/BLEDeviceShow'

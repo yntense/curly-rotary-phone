@@ -1,6 +1,42 @@
 /* miniprogram/pages/BLE/BLEDeviceShow/BLEDeviceShow.wxss */
 
 .BLEDeviceItem {
-  width: fill;
+  position: relative;
+  width: 90vw;
   height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-left: 5vw;
+  margin-right: 5vw;
+}
+
+.BLEDeviceItem .signal{
+  width: 10vw;
+  height: fit-content;
+}
+
+.BLEDeviceItem .device{
+  width: 75vw;
+  height: fit-content;
+}
+.BLEDeviceItem .inditor{
+  width: 5vw; 
+}
+.BLEDeviceItem .inditor::after{
+  top: 0;
+  position: absolute;
+	right: 30rpx;
+	bottom: 0;
+	display: block;
+	margin: auto;
+	width: 30rpx;
+	height: 30rpx;
+	color: var(--grey);
+	content: "\e6a3";
+	text-align: center;
+	font-size: 34rpx;
+	font-family: "cuIcon";
+  line-height: 30rpx;
+  align-items: center;
 }

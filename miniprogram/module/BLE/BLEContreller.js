@@ -158,6 +158,9 @@ class BLEController {
       success: () => {
         // 连接成功，获取服务
         this.getBLEDeviceServices(deviceId)
+      },
+      fail: () => {
+        console.log("fail")
       }
     })
   }
@@ -222,7 +225,7 @@ class BLEController {
       charaterTxId: this.charaterTxId
     }
    */
-  writeData(data) {
+  writeData(data, writeCB, sourceobject) {
     let that = this
     // 向蓝牙设备发送一个0x00的16进制数据
     let buffer = new ArrayBuffer(data.length)
@@ -236,6 +239,7 @@ class BLEController {
     let serviceId = data.serviceId
     let characteristicId = data.charaterTxId
     console.log(characteristicId, buffer)
+
     wx.writeBLECharacteristicValue({
       // 这里的 deviceId 需要在 getBluetoothDevices 或 onBluetoothDeviceFound 接口中获取
       deviceId,
@@ -246,17 +250,14 @@ class BLEController {
       // 这里的value是ArrayBuffer类型
       value: buffer,
       success(res) {
-        that.handleList.forEach(element => {
-          // if (element.handle.deviceId == deviceId) {
-            if (element.handle.onWriteDataSuccess) {
-              element.handle.onWriteDataSuccess(res)
-            }
-            return
-          // }
-        });
+        if (writeCB) {
+          writeCB(res, data.length, sourceobject)
+        }
       },
       fail(res) {
-        console.log(res)
+        if (writeCB) {
+          writeCB(res, data.length, sourceobject)
+        }
       }
     })
   }

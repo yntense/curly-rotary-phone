@@ -1,3 +1,7 @@
+import {
+  Queue
+} from './Queue'
+
 var bleUtils = require('./BLEUtils')
 const BLE_UART_STATE = {
   CONNECTING: "connecting",
@@ -11,6 +15,11 @@ const UUID = {
   CHARATER_TX_ID: 'FFF2'
 }
 
+const WRITE_STATE = {
+  WRITING: 0,
+  WRITE_DONE: 1,
+}
+
 class BLEUart {
   deviceId = ''
   serviceId = ''
@@ -18,8 +27,18 @@ class BLEUart {
   charaterTxId = ''
   BLEController
   BLEUartState = BLE_UART_STATE.DISCONNECTED
-  constructor() {
+  // 数据发送状态
+  writeState = WRITE_STATE.WRITE_DONE
+  // 用于计数发送失败次数
+  sendFailCount = 0
+  // 消息数组
+  messageQueue = new Queue()
+  // BLE 发送一次数据，微信建议不要一次发送大于 20 Bytes
+  sendSize = 20
+  //记录当前已经发送完成的数量
+  sendCount = 0
 
+  constructor() {
   }
 
   setBLEController(BLEController) {
@@ -119,7 +138,6 @@ class BLEUart {
       this.BLEUartState = BLE_UART_STATE.CONNECTED
       console.log("serviceUuid", serviceUuid)
     }
-
   }
 
   onBLEDeviceCharacteristicsFound(characteristic) {
@@ -153,11 +171,65 @@ class BLEUart {
     });
   }
 
+  /**
+   * array 需要 16 进制数组，可用 bleUtils.encodeUtf8() 进行转化
+   * @param {*} array 
+   */
   sendMessage(array) {
+    // 如果数组为空，返回
+    if ((array == null) || (array.length == 0)) {
+      return false
+    }
+    if (this.writeState == WRITE_STATE.WRITE_DONE) {
+      this.messageQueue.enqueue(array)
+      this.sendMessageNow()
+    } else {
+      console.log('正在发送中，入队', this.messageQueue.size())
+      this.messageQueue.enqueue(array)
+    }
+  }
+
+  /**
+   * 发送数据
+   * @param {} array 
+   */
+  sendMessageNow() {
     // let myMap = new Map()
     // myMap.set("keyString", "和键'a string'关联的值");
     // console.log(myMap)
-    let dataArray = bleUtils.encodeUtf8(array)
+    // bleUtils.encodeUtf8()
+    // 还未发送数据
+    this.writeState = WRITE_STATE.WRITING
+    let array = []
+    let dataArray = []
+    if (this.sendCount == 0) {
+      if ((array = this.messageQueue.first()) != null) {
+        if(array.length > this.sendSize)
+        {
+          dataArray = array.slice(0, this.sendSize)
+        }else
+        {
+          dataArray = array.slice(0, array.length)
+        }
+        
+      } else {
+          //发送完毕
+          return
+      }
+
+    } else {
+      array = this.messageQueue.first()
+      let length = array.length - this.sendCount
+      if( length > this.sendSize)
+      {
+        dataArray = array.slice(this.sendCount, this.sendCount + this.sendSize)
+      }else
+      {
+        dataArray = array.slice(this.sendCount, array.length)
+      }
+    }
+   
+    console.log('发送长度', dataArray.length)
     let data = {
       data: dataArray,
       length: dataArray.length,
@@ -165,7 +237,7 @@ class BLEUart {
       serviceId: this.serviceId,
       charaterTxId: this.charaterTxId
     }
-    this.BLEController.writeData(data)
+    this.BLEController.writeData(data, this.onWriteDataCallBack, this)
   }
 
   /** 不监听设备 */
@@ -191,20 +263,48 @@ class BLEUart {
     }
   }
 
- /**
+  /**
    * 监听ble设备连接状态
    */
-  onBLECharacteristicValueChange(res)
-  {
-      console.log(res)
+  onBLECharacteristicValueChange(res) {
+    console.log(res)
   }
 
-   /**
+  /**
    * 监听 写数据成功回调
    */
-  onWriteDataSuccess(res)
-  {
+  onWriteDataCallBack(res, length, sourceObject) {
+    
     console.log(res)
+    if (!res.errCode) {
+      sourceObject.sendCount += length
+      let array = sourceObject.messageQueue.first()
+      if(sourceObject.sendCount == array.length)
+      {
+        console.log(sourceObject.sendCount, array.length)
+        sourceObject.messageQueue.dequeue()
+
+        if(sourceObject.messageQueue.empty())
+        {
+          console.log('队列为空，发送完成')
+          sourceObject.sendCount = 0
+        }else{
+          console.log('队列不为空，继续发送')
+          sourceObject.sendCount = 0
+          sourceObject.writeState = WRITE_STATE.WRITE_DONE
+          sourceObject.sendMessageNow() 
+          return
+        }
+      }else{
+        console.log('消息未发完，继续发送')
+        sourceObject.writeState = WRITE_STATE.WRITE_DONE
+        sourceObject.sendMessageNow() 
+        return
+      }
+    } else {
+          console.log(res, '发送错误')
+    }
+    sourceObject.writeState = WRITE_STATE.WRITE_DONE
   }
 
 
